@@ -1,9 +1,11 @@
 import json
 from kafka import KafkaConsumer
-from .database import Database
+from database import Database
+
+DATASET_ID = 'week4'
 
 consumer = KafkaConsumer('gatekeeper', bootstrap_servers='localhost:9092')
-db = Database()
+db = Database(DATASET_ID)
 
 
 for msg in consumer:
@@ -14,10 +16,12 @@ for msg in consumer:
     for activity in payload['activities']:
         # 1. insert operation
         if activity['operation'] == 'insert':
+            # db.insert(activity)
             print(activity)
 
         # 2. delete operation
         elif activity['operation'] == 'delete':
+            # db.delete(activity)
             print(activity)
 
         # should be filtered by gatekeeper API

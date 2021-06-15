@@ -9,6 +9,7 @@ def test_index():
     assert response.status_code == 200
 
 def test_create_activities_success():
+    # arrange
     payload = {
         "activities": [
             {
@@ -29,14 +30,17 @@ def test_create_activities_success():
             }
         ]
     }
+    # act
     response = client.post(
         "/api/activities",
         json=payload,
     )
+    # assert
     assert response.status_code == 200
     assert response.json() == {"message": "ok", "payload": payload}
 
 def test_create_activities_error_incomplete_payload():
+    # arrange
     payload = {
         "activities": [
             {
@@ -47,13 +51,16 @@ def test_create_activities_error_incomplete_payload():
             }
         ]
     }
+    # act
     response = client.post(
         "/api/activities",
         json=payload,
     )
+    # assert
     assert response.status_code == 422
 
 def test_create_activities_error_not_recognized_operation():
+    # arrange
     payload = {
         "activities": [
             {
@@ -65,9 +72,11 @@ def test_create_activities_error_not_recognized_operation():
             }
         ]
     }
+    # act
     response = client.post(
         "/api/activities",
         json=payload,
     )
+    # assert
     assert response.status_code == 406
     assert 'error' in response.json()
