@@ -20,6 +20,17 @@ services:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
     volumes:
       - ./kafka-data:/var/lib/kafka-data/data
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3014:3000'
+    environment:
+      - 'GF_SECURITY_ADMIN_PASSWORD=grafana'
+    volumes:
+      - grafana_data:/opt/grafana/data
       
 volumes:
   kafka-data:
+  grafana_data:
+    driver: local
