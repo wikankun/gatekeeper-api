@@ -1,5 +1,7 @@
 # Gatekeeper API
 
+[![FastAPI Test](https://github.com/wikankun/gatekeeper-api/actions/workflows/fastapi.yml/badge.svg)](https://github.com/wikankun/gatekeeper-api/actions/workflows/fastapi.yml)
+
 Setup kafka
 ```
 docker-compose up -d
