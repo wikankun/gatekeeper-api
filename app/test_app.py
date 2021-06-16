@@ -57,7 +57,7 @@ def test_create_activities_error_incomplete_payload():
         json=payload,
     )
     # assert
-    assert response.status_code == 422
+    assert response.status_code == 406
 
 def test_create_activities_error_not_recognized_operation():
     # arrange

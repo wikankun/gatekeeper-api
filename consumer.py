@@ -1,7 +1,9 @@
+import os
 import json
 from kafka import KafkaConsumer
 from database import Database
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "keyfile.json"
 DATASET_ID = 'week4'
 
 consumer = KafkaConsumer('gatekeeper', bootstrap_servers='localhost:9092')
