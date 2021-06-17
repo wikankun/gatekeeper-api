@@ -5,8 +5,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from kafka import KafkaProducer
 from .models import Payload
+from ..database import Database
 
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
+db = Database('week4')
 
 app = FastAPI()
 
@@ -15,6 +17,7 @@ app = FastAPI()
 async def validation_exception_handler(request, exc):
     error_msg = exc.errors()
     # log ke activity log
+    db.insert_error_log(request, error_msg)
     return JSONResponse(
         status_code=status.HTTP_406_NOT_ACCEPTABLE,
         content={'error': error_msg},
@@ -36,6 +39,7 @@ def read_item(payload: Payload):
         if activity['operation'] not in ['insert', 'delete']:
             error_msg = 'activity operation not allowed'
             # log ke activity_log
+            db.insert_error_log(payload, error_msg)
             return JSONResponse(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 content={'error': error_msg},
