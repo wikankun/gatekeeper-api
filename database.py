@@ -27,6 +27,7 @@ class Database:
 
             query = f"CREATE TABLE {self.dataset_id}.{payload['table']} AS\n" \
                 "SELECT " + values
+
             result = self.client.query(query).result()
             self.tables.append(payload['table'])
             # log success
@@ -46,12 +47,14 @@ class Database:
 
             query = f"INSERT {self.dataset_id}.{payload['table']}\n" \
                 f"({columns}) VALUES \n" + "(" + values[:-1] + ")"
+
             result = self.client.query(query).result()
             # log success
             self.insert_log(payload)
             return result
 
             # 1.b.2. field exist
+
 
     def delete(self, payload):
         # 2.a. table not available in db
@@ -95,7 +98,6 @@ class Database:
             VALUES
             ('{json.dumps(payload)}', '{datetime.now()}', false)
         """
-
         return self.client.query(query).result()
 
     def insert_error_log(self, payload, error_message):
@@ -105,5 +107,4 @@ class Database:
             VALUES
             ('{json.dumps(payload)}', '{datetime.now()}', true, '{error_message}')
         """
-
         return self.client.query(query).result()
