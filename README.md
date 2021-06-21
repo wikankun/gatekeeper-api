@@ -1,6 +1,10 @@
 # Gatekeeper API
 
 [![FastAPI Test](https://github.com/wikankun/gatekeeper-api/actions/workflows/fastapi.yml/badge.svg)](https://github.com/wikankun/gatekeeper-api/actions/workflows/fastapi.yml)
+[![GitHub tag](https://img.shields.io/github/tag/wikankun/gatekeeper-api.svg)](https://GitHub.com/wikankun/gatekeeper-api/tags/)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+
+
 
 Setup kafka
 ```
@@ -29,17 +33,17 @@ Run FastAPI server
 uvicorn app.app:app --reload
 ```
 
-Run Consumer.py
+Run `consumer.py`
 ```
-python consumer.py
+python -m app.consumer
 ```
 
-Run load testing with locust
+Load test with locust
 ```
 locust
 ```
 
-Run unit testing
+Unit test
 ```
 pytest
 ```
