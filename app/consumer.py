@@ -1,11 +1,22 @@
+import logging
 import json
+import os
+from dotenv import load_dotenv
 from kafka import KafkaConsumer
+from google.api_core.exceptions import BadRequest
 from .database import Database
 
-consumer = KafkaConsumer('gatekeeper', bootstrap_servers='localhost:9092')
-db = Database('week4')
+load_dotenv()
 
-print('Consumer Starting')
+DATASET_ID = os.environ.get("DATASET_ID")
+KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC")
+BOOTSTRAP_SERVER = os.environ.get("BOOTSTRAP_SERVER")
+
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
+consumer = KafkaConsumer(KAFKA_TOPIC, bootstrap_servers=BOOTSTRAP_SERVER)
+db = Database(DATASET_ID)
+
+logging.warning('Consumer Starting')
 for msg in consumer:
     # deserialize json
     payload = json.loads(msg.value)
@@ -13,14 +24,11 @@ for msg in consumer:
     # looping through activities
     for activity in payload['activities']:
         try:
-            # 1. insert operation
-            if activity['operation'] == 'insert':
-                db.insert(activity)
-                print(activity)
-            # 2. delete operation
-            elif activity['operation'] == 'delete':
-                db.delete(activity)
-                print(activity)
-        except Exception as e:
+            db.process(activity)
+            logging.warning(activity)
+        except BadRequest as e:
+            db.insert_error_log(activity, e.code)
+            logging.error(e)
+        except BaseException as e:
             db.insert_error_log(activity, e)
-            print(e)
+            logging.error(e)

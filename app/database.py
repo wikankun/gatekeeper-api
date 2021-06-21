@@ -1,10 +1,10 @@
-import os
 import re
 import json
+from dotenv import load_dotenv
 from datetime import datetime
 from google.cloud import bigquery
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "keyfile.json"
+load_dotenv()
 
 
 class Database:
@@ -19,6 +19,14 @@ class Database:
     def close(self):
         return self.client.close()
 
+    def process(self, activity):
+        # 1. insert operation
+        if activity['operation'] == 'insert':
+            self.insert(activity)
+        # 2. delete operation
+        elif activity['operation'] == 'delete':
+            self.delete(activity)
+
     def insert(self, payload):
         # 1.a. table not available in db
         if payload['table'] not in self.tables:
@@ -30,7 +38,6 @@ class Database:
         # 1.b. table available in db
         else:
             # 1.b.1. field does not exist
-
             # 1.b.2. field exist
             result = self.insert_alter_table(payload)
             self.insert_log(payload)
@@ -62,18 +69,17 @@ class Database:
         return 'STRING'
 
     def name_type_pair(self, payload):
-        paired_schema = ''
+        paired_schema = f"ALTER TABLE {self.dataset_id}.{payload['table']} "
         column_names = payload['col_names']
         column_types = [self.datatype_mapper(
             column_type) for column_type in payload['col_types']]
         for index, (name, dtype) in enumerate(zip(column_names, column_types)):
-            # Default to Add Column because the constraint only Alter Adding Column
-            paired_schema += f'ADD COLUMN IF NOT EXISTS {name} {dtype}{", " if index != len(column_names)-1 else ""}'
-
+            end_line = ", " if index != len(column_names)-1 else ""
+            paired_schema += f'ADD COLUMN IF NOT EXISTS {name} {dtype}{end_line}'
         return paired_schema
 
     def value_name_pair(self, payload):
-        paired_schema = ''
+        paired_schema = ""
         column_names = payload['col_names']
         column_values = payload['col_values']
         for value, name in zip(column_values, column_names):
@@ -81,7 +87,6 @@ class Database:
                 paired_schema += f"{value} {name}, "
             else:
                 paired_schema += f"'{value}' {name}, "
-
         return paired_schema
 
     def insert_create_table(self, payload):
@@ -89,16 +94,15 @@ class Database:
 
         query = f"""CREATE TABLE {self.dataset_id}.{payload['table']} AS
             SELECT {values}"""
-
         return self.client.query(query).result()
     
     def insert_alter_table(self, payload):
+        self.client.query(self.name_type_pair(payload)).result()
         columns = ",".join(payload['col_names'])
         values = str(tuple(payload['col_values']))
 
         query = f"""INSERT `{self.dataset_id}.{payload['table']}` ({columns})
             VALUES {values}"""
-
         return self.client.query(query).result()
 
     def delete_nonexisting_table(self, payload):
@@ -115,7 +119,6 @@ class Database:
             DELETE FROM {self.dataset_id}.{payload['table']}
             WHERE {where_stmnt}
         """
-
         return self.client.query(query).result()
 
     def where_clause(self, names, values):

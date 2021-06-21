@@ -1,4 +1,6 @@
 import json
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -7,8 +9,14 @@ from kafka import KafkaProducer
 from .models import Payload
 from .database import Database
 
-producer = KafkaProducer(bootstrap_servers='localhost:9092')
-db = Database('week4')
+load_dotenv()
+
+DATASET_ID = os.environ.get("DATASET_ID")
+KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC")
+BOOTSTRAP_SERVER = os.environ.get("BOOTSTRAP_SERVER")
+
+producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVER)
+db = Database(DATASET_ID)
 
 app = FastAPI()
 
@@ -45,7 +53,7 @@ def read_item(payload: Payload):
                 content={'error': error_msg},
             )
 
-    producer.send('gatekeeper',
+    producer.send(KAFKA_TOPIC,
                   json.dumps(request).encode('utf-8'))
 
     return JSONResponse(
