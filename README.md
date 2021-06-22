@@ -67,16 +67,30 @@ localhost:8000/docs
 
 ![](assets/gatekeeper_achitecture.png)
 
-My approach consist of three main part, API Gateway, Kafka, and Consumer.
-- API Gateway
-  Handles Payload from user, validate it, and send it to message queue.
+My approach consist of three main part, FastAPI, Kafka, and Consumer.
+
+- FastAPI
+
+Handles Payload from clients, validate it, and send it to Kafka.
+
 - Kafka
-  Acts as message queue, delivers the messages to consumer(s).
+
+Acts as message queue, delivers the messages to consumer(s).
+
 - Consumer
-  Consume messages from Kafka, and store it into BigQuery Table(s). Every transaction is logged into `activity_log` table.
+
+Consume messages from Kafka, and store it into BigQuery Table(s). Every transaction is logged into `activity_log` table.
 
 ## Outputs
 
 [Dashboard](https://datastudio.google.com/u/0/reporting/db4bae0c-7903-475b-a6c1-c36a349b13ce/page/XobPC)
 
 [Load Testing Result](assets/gatekeeper_report_load_test.html)
+
+![](assets/dashboard.png)
+
+![](assets/number_of_users.png)
+
+![](assets/response_times_.png)
+
+![](assets/total_requests_per_second.png)
