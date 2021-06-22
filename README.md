@@ -13,7 +13,9 @@
 
 ## How to run
 
-- Place your key.json from your google service account in the directory
+- Place your keyfile.json from your google service account to access google cloud in the directory
+
+- Rename .env.example to .env and fill it
 
 - Setup kafka
 ```
@@ -71,15 +73,15 @@ My approach consist of three main part, FastAPI, Kafka, and Consumer.
 
 - FastAPI
 
-Handles Payload from clients, validate it, and send it to Kafka.
+  Handles Payload from clients, validate it, and send it to Kafka.
 
 - Kafka
 
-Acts as message queue, delivers the messages to consumer(s).
+  Acts as message queue, delivers the messages to consumer(s).
 
 - Consumer
 
-Consume messages from Kafka, and store it into BigQuery Table(s). Every transaction is logged into `activity_log` table.
+  Consume messages from Kafka, and store it into BigQuery Table(s). Every transaction is logged into `activity_log` table.
 
 ## Outputs
 
