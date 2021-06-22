@@ -87,9 +87,9 @@ My approach consist of three main part, FastAPI, Kafka, and Consumer.
 
 [Dashboard](https://datastudio.google.com/u/0/reporting/db4bae0c-7903-475b-a6c1-c36a349b13ce/page/XobPC)
 
-[Load Testing Result](assets/gatekeeper_report_load_test.html)
-
 ![](assets/dashboard.png)
+
+[Load Testing Result](assets/gatekeeper_report_load_test.html)
 
 ![](assets/number_of_users.png)
 
